@@ -3,12 +3,21 @@ import React from 'react';
 import authorStyles from '../../../styles/textStyles';
 
 const TitleSectionWithImage = ({ data, author, date }) => {
-  
+  // 添加判断中文的函数
+  const containsChinese = (text) => {
+    return /[\u4e00-\u9fa5]/.test(text);
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0]; // 转换成 YYYY-MM-DD 格式
+    return date.toISOString().split('T')[0];
   };
+
+  // 根据标题语言决定标签文本
+  const isChineseTitle = containsChinese(data?.title || '');
+  const authorLabel = isChineseTitle ? '作者' : 'WRITTEN BY';
+  const dateLabel = isChineseTitle ? '发布日期' : 'PUBLISHED ON';
 
   return (
     <div className="relative z-10 min-h-[80vh] pt-20 pb-8 flex items-center bg-gradient-to-b from-[#EBEDFF] to-[#FAF8FF]">
@@ -31,7 +40,7 @@ const TitleSectionWithImage = ({ data, author, date }) => {
               <div className="flex gap-8">
                 <div className="mt-4">
                   <span className={`${authorStyles.paragraph.fontSize} ${authorStyles.paragraph.color} block mb-1 text-gray-600 text-xs md:text-sm`}>
-                    WRITTEN BY
+                    {authorLabel}
                   </span>
                   <span className={`${authorStyles.paragraph.fontSize} ${authorStyles.paragraph.color} text-gray-600 text-xs md:text-sm`}>
                     {author}
@@ -39,10 +48,10 @@ const TitleSectionWithImage = ({ data, author, date }) => {
                 </div>
                 
                 <div className="mt-4">
-                  <span className={`${authorStyles.paragraph.fontSize} ${authorStyles.paragraph.color} block mb-1 text-gray-600`}>
-                    PUBLISHED ON
+                  <span className={`${authorStyles.paragraph.fontSize} ${authorStyles.paragraph.color} block mb-1 text-gray-600 text-xs md:text-sm`}>
+                    {dateLabel}
                   </span>
-                  <span className={`${authorStyles.paragraph.fontSize} ${authorStyles.paragraph.color} text-gray-600`}>
+                  <span className={`${authorStyles.paragraph.fontSize} ${authorStyles.paragraph.color} text-gray-600 text-xs md:text-sm`}>
                     {formatDate(date)}
                   </span>
                 </div>

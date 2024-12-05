@@ -12,9 +12,9 @@ const FAQs = ({ data }) => {
       </div>
 
       <div className="w-full md:w-[70%] grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-x-12 md:gap-y-6 p-4 md:py-12">
-        {data.contents.map((faq, index) => (
+        {data.bottomContent.map((faq, index) => (
           <div key={index} className="pb-6">
-            <h3 className={`${authorStyles.h3.fontSize} ${authorStyles.h3.fontWeight} ${authorStyles.h3.color} mb-2`}>
+            <h3 className="text-lg font-semibold text-gray-500 mb-2">
               {faq.question}
             </h3>
             <p className={`${authorStyles.paragraph.fontSize} ${authorStyles.paragraph.color} text-sm md:text-base`}>

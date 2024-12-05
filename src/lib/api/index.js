@@ -40,3 +40,20 @@ export async function getArticleBySlug(slug, lang, token) {
     throw error;
   }
 }
+
+// 获取客户定制推荐
+export async function getCustomRecommendations({ pageId, customerId, title, category, lang }) {
+  try {
+    const response = await apiClient.post('/kreado/recommend', {
+      pageId,
+      customerId,
+      title,
+      category,
+      lang
+    });
+    return response.data;
+  } catch (error) {
+    console.error('获取客户定制推荐失败:', error);
+    return null;
+  }
+}
