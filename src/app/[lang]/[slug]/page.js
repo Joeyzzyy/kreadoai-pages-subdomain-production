@@ -47,33 +47,53 @@ export default async function ArticlePage({ params: paramsPromise }) {
   const { lang, slug } = params;
   
   if (!['en', 'zh'].includes(lang)) {
-    notFound();
+    return notFound();
   }
 
+  // 使用 try-catch 但不再抛出错误
+  const articleData = await getArticleBySlug(slug, lang, process.env.TOKEN);
+  
+  if (!articleData?.data?.[0] || articleData.data[0].publishStatus !== 'publish') {
+    return notFound();
+  }
+    
+  const article = articleData.data[0];
+  
   try {
-    console.log('请求路径:', `/${lang}/${slug}`);
-    console.log('lang is', lang);
-    const articleData = await getArticleBySlug(slug, lang, process.env.TOKEN);
+    // 获取推荐文章
+    const recommendations = await getCustomRecommendations({
+      pageId: article.pageId,
+      customerId: article.customerId,
+      title: article.title,
+      category: article.category,
+      lang
+    });
 
-    console.log('articleData is', articleData)
-    
-    if (!articleData?.data?.[0] || articleData.data[0].publishStatus !== 'publish') {
-      notFound();
+    if (recommendations && recommendations.recommended_articles.length >= 4) {
+      const recommendationSection = {
+        componentName: "MoreInsightsWithFourCards",
+        bottomContent: recommendations.recommended_articles.map(rec => ({
+          imageUrl: rec.imageUrl,
+          subTitle: rec.category?.toUpperCase() || 'ARTICLE',
+          title: rec.title
+        })).slice(0, 4) // 确保只取前4篇文章
+      };
+
+      // 将推荐部分添加到文章的 sections 中
+      article.sections.push(recommendationSection);
     }
-    
-    const article = articleData.data[0];
-
-    return (
-      <ClientWrapper>
-        <main className="flex-grow">
-          <KreadoaiLayout article={article} />
-        </main>
-      </ClientWrapper>
-    );
   } catch (error) {
-    console.error('Error fetching article:', error);
-    notFound();
+    // 推荐文章获取失败时静默处理，不影响主文章显示
+    console.warn('Failed to fetch recommendations:', error);
   }
+
+  return (
+    <ClientWrapper>
+      <main className="flex-grow">
+        <KreadoaiLayout article={article} />
+      </main>
+    </ClientWrapper>
+  );
 }
 
 export async function generateMetadata({ params: paramsPromise }) {
@@ -94,33 +114,6 @@ export async function generateMetadata({ params: paramsPromise }) {
     }
 
     const article = articleData.data[0];
-
-    // 获取推荐文章
-    const recommendations = await getCustomRecommendations({
-      pageId: article.pageId,
-      customerId: article.customerId, // 确保这个字段存在
-      title: article.title,
-      category: article.category, // 确保这个字段存在s
-      lang
-    });
-
-    console.log('recommendations is', recommendations)
-
-    // 如果有推荐文章，将其添加到 sections 中
-    if (recommendations && recommendations.recommended_articles.length >= 4) {
-      const recommendationSection = {
-        componentName: "MoreInsightsWithFourCards",
-        bottomContent: recommendations.recommended_articles.map(rec => ({
-          imageUrl: rec.imageUrl, // 使用推荐文章的图片或默认图片
-          subTitle: rec.category?.toUpperCase() || 'ARTICLE',
-          title: rec.title
-        })).slice(0, 4) // 确保只取前4篇文章
-      };
-
-      // 将推荐部分添加到文章的 sections 中
-      article.sections.push(recommendationSection);
-    }
-
     const authorConfig = KREADO_METADATA;
     
     return {
