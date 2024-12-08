@@ -152,3 +152,29 @@ export async function generateMetadata({ params: paramsPromise }) {
     };
   }
 }
+
+export async function generateStaticParams() {
+  try {
+    const response = await getArticles(process.env.CUSTOMER_ID, process.env.TOKEN);
+    
+    if (!response?.data) {
+      console.warn('No articles data received');
+      return [];
+    }
+
+    // 过滤掉无效的文章数据
+    const validArticles = response.data.filter(article => 
+      article && 
+      typeof article.language === 'string' && 
+      typeof article.slug === 'string'
+    );
+
+    return validArticles.map((article) => ({
+      lang: article.language,
+      slug: article.slug
+    }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return []; // 发生错误时返回空数组
+  }
+}
