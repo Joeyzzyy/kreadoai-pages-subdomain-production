@@ -1,10 +1,8 @@
 'use client';
 import React, { useState } from 'react';
-import authorStyles from '../../../styles/textStyles';
+import fontStyles from '../../../styles/textStyles';
 
 const FAQTwoColumnsWithSmallTitle = ({ data, author }) => {
-  const styles = authorStyles[author];
-  
   // 添加展开/收起状态控制
   const [openIndex, setOpenIndex] = useState(null);
 

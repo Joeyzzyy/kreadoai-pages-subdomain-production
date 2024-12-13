@@ -2,10 +2,11 @@
 import React, { useState, useRef } from 'react';
 import CustomButton from './widget-custom_button';
 import buttonLinks from '../../ui/button/links';
-import Image from 'next/image';
-import styles from './styles/hero-section-with-video.module.css';
+import fontStyles from '../../../styles/textStyles';
+import { gradients } from './shared-gradient-styles';
 
 const HeroSectionWithVideo = ({ data }) => {
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef(null);
   const topContent = data.topContent;
@@ -22,54 +23,40 @@ const HeroSectionWithVideo = ({ data }) => {
     return buttonLinks.workbench || '#';
   };
 
+  const handleVideoLoad = () => {
+    setIsVideoLoaded(true);
+  };
+
   return (
-    <div className="relative overflow-x-hidden">
-      <div className={`banner-container w-full bg-cover bg-center bg-no-repeat ${styles['banner-height']}`}>
-        <div className="absolute inset-0">
-          <Image
-            src="/images/kreado-top-bg.webp"
-            alt="Background"
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-            className="object-fill"
-            unoptimized
-          />
-          <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-white/50 via-white/8 via-white/3 to-transparent"></div>
-        </div>
-
-        <div className="relative z-10 pt-16 md:pt-20 lg:pt-24">
-          <CustomButton 
-            variant="KREADO" 
-            href={getButtonLink()}
-            className="block mx-auto mt-8 sm:mt-0 bg-indigo-100/90 hover:bg-indigo-50 text-indigo-900 font-semibold px-4 md:px-6 rounded-full shadow-sm text-sm h-8 flex items-center gap-2"
-          >
-            {topContent.buttonText}
-          </CustomButton>
-        </div>
-
-        <div className="relative z-10 pt-8 md:pt-6 mb-10 md:mb-8 px-4">
-          <h2 className="text-center text-2xl md:text-3xl font-bold text-white">
+    <div className={`relative py-12 md:py-16 ${gradients.medium.primary}`}>
+      <div className="w-full">
+        <div className="relative z-10 pt-8 md:pt-12 mb-8 md:mb-12 px-4">
+          <h2 className={`text-center ${fontStyles.h2.fontSize} ${fontStyles.h2.fontWeight} ${fontStyles.h2.color}`}>
             {topContent.title}
           </h2>
           {topContent.description && (
-            <p className="text-center text-base md:text-lg mt-2 md:mt-3 text-white/90 max-w-3xl mx-auto">
+            <h3 className={`text-center ${fontStyles.h3.fontSize} ${fontStyles.h3.color} mt-3 max-w-3xl mx-auto`}>
               {topContent.description}
-            </p>
+            </h3>
           )}
-          {topContent.desc && (
-            <p className="text-center text-sm md:text-base mt-2 md:mt-3 text-white/80 max-w-2xl mx-auto">
-              {topContent.desc}
-            </p>
-          )}
+          
+          <div className="mt-8">
+            <CustomButton 
+              variant="KREADO" 
+              href={getButtonLink()}
+              className="block mx-auto bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 font-medium px-6 md:px-8 rounded-md text-sm h-10 flex items-center gap-2 transition-all duration-200"
+            >
+              {topContent.buttonText}
+            </CustomButton>
+          </div>
         </div>
 
-        <div className={`relative w-full max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 ${styles['video-container']}`}>
+        <div className="relative w-full max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 mb-12 md:mb-16">
           <div className="flex justify-center">
-            <div className={`w-full md:max-w-[800px] max-w-[580px] ${styles['video-wrapper']} relative`}>
+            <div className="w-full md:max-w-[800px] max-w-[580px] relative">
               <button
                 onClick={toggleMute}
-                className="absolute bottom-4 right-4 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors z-50 cursor-pointer"
+                className="absolute bottom-4 right-4 p-2 bg-black/80 hover:bg-black text-white rounded-md transition-colors z-50 cursor-pointer"
                 aria-label={isMuted ? "取消静音" : "静音"}
                 type="button"
               >
@@ -84,8 +71,19 @@ const HeroSectionWithVideo = ({ data }) => {
                   </svg>
                 )}
               </button>
-              <div className="bg-white/80 rounded-xl shadow-lg overflow-hidden backdrop-blur-lg border border-indigo-100/20">
-                <div className={styles['video-aspect-ratio']}>
+              <div className={`
+                relative rounded-xl overflow-hidden
+                shadow-[0_0_30px_rgba(59,130,246,0.2)]
+                before:absolute before:inset-0
+                before:rounded-xl
+                before:p-[1px]
+                before:bg-gradient-to-r
+                before:from-blue-400/50 before:via-indigo-400/50 before:to-purple-400/50
+              `}>
+                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                  {!isVideoLoaded && (
+                    <div className="absolute top-0 left-0 w-full h-full bg-gray-100 animate-pulse" />
+                  )}
                   <video
                     ref={videoRef}
                     className="absolute top-0 left-0 w-full h-full object-cover"
@@ -94,14 +92,15 @@ const HeroSectionWithVideo = ({ data }) => {
                     loop
                     muted={isMuted}
                     playsInline
+                    onLoadedData={handleVideoLoad}
+                    preload="auto"
+                    loading="eager"
                   />
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-72 bg-gradient-to-t from-white/50 via-white/8 via-white/3 to-transparent"></div>
       </div>
     </div>
   );

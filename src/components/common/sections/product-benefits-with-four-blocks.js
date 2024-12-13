@@ -3,7 +3,9 @@
 import React from 'react';
 import CustomButton from './widget-custom_button';
 import buttonLinks from '../../ui/button/links';
-import authorStyles from '../../../styles/textStyles';
+import fontStyles from '../../../styles/textStyles';
+import { gradients } from './shared-gradient-styles';
+
 
 const ProductBenefitsWithFourBlocksq = ({ data, author }) => {
   const getButtonLink = () => {
@@ -20,16 +22,16 @@ const ProductBenefitsWithFourBlocksq = ({ data, author }) => {
     return styles[colorKey] || styles.blue;
   };
 
-  const styles = authorStyles[author];
+  const styles = fontStyles[author];
   
   return (
-    <div className="flex justify-center bg-white py-6 md:py-10">
+    <div className={`flex justify-center ${gradients.medium.primary}`}>
       <div className="w-[95%] md:w-[90%] lg:w-[80%] flex flex-col md:flex-row items-center">
-        <div className="w-full md:w-2/5 p-4 md:p-10 flex flex-col space-y-6 md:space-y-8">
-          <h2 className={`text-center md:text-left ${authorStyles.h2.fontSize} ${authorStyles.h2.fontWeight} ${authorStyles.h2.color}`}>
+      <div className="w-full md:w-2/5 pr-4 md:pr-10 pt-4 pb-4 md:pt-10 md:pb-10 flex flex-col space-y-6 md:space-y-8">
+          <h2 className={`text-center md:text-left ${fontStyles.h2.fontSize} ${fontStyles.h2.fontWeight} ${fontStyles.h2.color}`}>
             {data.leftContent.title}
           </h2>
-          <p className={`text-center md:text-left ${authorStyles.paragraph.fontSize} ${authorStyles.paragraph.color}`}>
+          <p className={`text-center md:text-left ${fontStyles.paragraph.fontSize} ${fontStyles.paragraph.color}`}>
             {data.leftContent.description}
           </p>
           <div className="flex justify-center md:justify-start">
@@ -66,10 +68,10 @@ const ProductBenefitsWithFourBlocksq = ({ data, author }) => {
                 <div className="absolute -top-1/2 -left-1/2 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:translate-x-4 transition-transform duration-700" />
                 
                 <div className="relative z-10">
-                  <h3 className={`${authorStyles.h3.fontSize} ${authorStyles.h3.fontWeight} text-white mb-2 text-shadow-sm`}>
+                  <h3 className={`${fontStyles.h3.fontSize} ${fontStyles.h3.fontWeight} text-white mb-2 text-shadow-sm`}>
                     {module.title}
                   </h3>
-                  <p className={`${authorStyles.paragraph.fontSize} text-white font-medium text-shadow-sm`}>
+                  <p className={`${fontStyles.paragraph.fontSize} text-white font-medium text-shadow-sm`}>
                     {module.content}
                   </p>
                 </div>
